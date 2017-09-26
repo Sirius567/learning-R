@@ -9,6 +9,7 @@
 
 # we'll make use of the mtcars dataset
 library(data.table)
+library(ggplot2)
 
 data("mtcars")
 raw_data<-data.table(model=rownames(mtcars),mtcars)
@@ -37,6 +38,7 @@ print(p)
 p<-p+ylim(0,50)+xlim(0,400)
 p+geom_smooth(method='lm')
 
+# we build our first simple model
 simple_model_1<-lm(mpg~hp, data=raw_data)
 
 summary(simple_model_1)
@@ -74,10 +76,10 @@ std_coef<-coef(summary(simple_model_1))[, "Std. Error"]['hp']
 pivot_value<-qt(0.975,df=simple_model_1$df.residual)
 
 CI_95<-c(mean_coef-pivot_value*std_coef,mean_coef+pivot_value*std_coef)
-
+CI_95
 
 # create a function that takes this simple model, and a level of significance (alpha)
-# and returns the Confidence Interval estiation of hp coefficient.
+# and returns the Confidence Interval estimation of hp coefficient.
 
 
 # the fitness of a model represents the explained or predicted value of y from the x variables
@@ -128,4 +130,61 @@ boxplot(resids_simple_1); grid()
 
 # plot 4 
 qqnorm(resids_simple_1)
+
+# pick another explanatory variable, say "disp", and generate another simple model
+# replicate the analysis done: interpretation, CI and significance of the slope
+# and residual analysis
+
+# which variables explains better the mpg by itself?
+
+
+# forecasting 
+
+# to get predictions of y with new x values just have to:
+new_values_hp<-data.frame(hp=c(50,100,150,200))
+pred_simple_1<-predict(simple_model_1,newdata = new_values_hp)
+
+par(mfrow=c(1,1))
+plot(raw_data$hp,raw_data$mpg, pch=19); grid()
+points(cbind(new_values_hp,pred_simple_1), pch=19, col='red')
+
+
+# multiple regression
+
+multi_model_1<-lm(mpg~., data=raw_data[,-'model',with=F])
+summary(multi_model_1)
+
+fit_2<-multi_model_1$fitted
+
+par(mar=c(8,3.5,3.5,1),mfrow=c(1,1))
+plot(raw_data$mpg, type='o', xlab='',ylab='',xaxt='n',lwd=2,pch=19, main='Multiple Model Fit'); grid()
+axis(1,at=1:nrow(raw_data),labels = raw_data$model,las=2)
+lines(multi_model_1$fitted,col='red',type='o',lwd=2,pch=19)
+lines(simple_model_1$fitted,col='cornflowerblue',type='o',lwd=2,pch=19)
+
+resids_multi_1<-multi_model_1$residuals
+
+summary(resids_multi_1)
+summary(resids_simple_1)
+
+sd(resids_multi_1)
+sd(resids_simple_1)
+
+
+# plot 1
+par(mfrow=c(2,2),mar=c(8,3.5,3.5,1))
+plot(resids_multi_1, type='o', xlab='',ylab='',xaxt='n',lwd=2,pch=19, main='Simple Model Residuals'); grid()
+axis(1,at=1:nrow(raw_data),labels = raw_data$model,las=2)
+
+# plot 2 
+hist(resids_multi_1)
+
+# plot 3 
+boxplot(resids_multi_1); grid()
+
+# plot 4 
+qqnorm(resids_multi_1)
+
+
+
 
