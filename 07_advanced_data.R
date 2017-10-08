@@ -68,9 +68,9 @@ data_mtcars[!duplicated(model)]
 
 library(readxl)
 
-setwd("C:/Users/sirio/Documents/IE - R Programming")
+setwd("C:/Users/sirio/Documents/learning-R")
 
-raw_data<-data.table(read_excel('data/AmesHousing.xlsx'))
+raw_data<-data.table(read_excel('AmesHousing.xlsx'))
 # raw_data<-fread('AmesHousing.csv',stringsAsFactors = T)
 
 str(raw_data)
@@ -90,10 +90,9 @@ char_to_factor<-function(var){
 }
 
 # the traditional way
-raw_data<-data.frame(raw_data)
 for ( i in 1:ncol(raw_data)){
-  if(is.character(raw_data[,i])){
-    raw_data[,i]<-as.factor(raw_data[,i])
+  if(is.character(raw_data[[i]])){
+    raw_data[[i]]<-as.factor(raw_data[[i]])
   }
 }
 
@@ -101,11 +100,17 @@ str(raw_data)
 
 # the data.table way
 # rerun from line 73 to 80
-raw_data[, names(raw_data)[sapply(raw_data,is.character)]:= lapply(.SD, factor), .SDcols=sapply(raw_data,is.character)]
+raw_data[, names(raw_data)[sapply(raw_data,is.character)]:= lapply(.SD, as.factor), .SDcols=sapply(raw_data,is.character)]
 str(raw_data)
 
+raw_data[, names(raw_data)[sapply(raw_data,is.integer)]:= lapply(.SD, as.numeric), .SDcols=sapply(raw_data,is.integer)]
 
 names(raw_data)<-gsub(" ", "_", names(raw_data), fixed = TRUE)
+
+# we save for further use
+
+saveRDS(raw_data,'AmesHousing_pro.RData')
+
 
 
 length(unique(raw_data$PID))
@@ -140,5 +145,10 @@ raw_data[,.(mean_price=mean(SalePrice),n=.N),by=Exter_Qual][order(mean_price)]
 
 raw_data[,.(mean_price=mean(SalePrice),n=.N),by=Heating_QC][order(mean_price)]
 
+raw_data[,.(mean_price=mean(SalePrice),n=.N),by=c('Exter_Qual','Heating_QC')][order(mean_price)]
+
+
 
 with(raw_data,table(Heating_QC,Exter_Qual))
+
+saveRDS(raw_data,'housing_data.RData')
