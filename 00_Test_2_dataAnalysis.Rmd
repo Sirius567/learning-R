@@ -1,0 +1,118 @@
+---
+title: "Test 1"
+author: "Sirio Sobrino"
+date: "29/9/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(data.table)
+```
+
+## Data Analysis
+
+1. Download the dataset xxx from [http://archive.ics.uci.edu/ml/datasets/Forest+Fires]
+   + Read the csv and store in a data.table (raw_data), and check its structure and class 
+   + Visualize the first 10 rows of raw_data and get a summary of each variable
+
+
+```{r}
+raw_data<-readRDS('AmesHousing_pro.RData')
+raw_data<-raw_data[,.(SalePrice,GrLivArea,LotArea,GarageArea,FullBath,BedroomAbvGr,KitchenQual,Heating,PoolArea)]
+str(raw_data)
+head(raw_data, 10)
+summary(raw_data)
+```
+
+2. Analize the correlation matrix of raw_data's numeric variables. Plot the pairwise correlations
+   + Analize the presence of NAs in data. Which variable has any NAs?
+   + Eliminate the NA value in variable with NAs and repeat the analysis, and repeat the correlation analysis
+   
+
+```{r}
+
+
+var_numeric<-raw_data[,names(raw_data)[sapply(raw_data,is.numeric)],with=F]
+
+apply(sapply(var_numeric,is.na),2,sum)
+
+
+data.frame(cor(var_numeric))
+pairs(var_numeric)
+
+library(corrplot)
+sum(is.na(var_numeric))
+corrplot(cor(var_numeric),'number')
+
+var_numeric<-var_numeric[!is.na(GarageArea)]
+data.frame(cor(var_numeric))
+pairs(var_numeric)
+corrplot(cor(var_numeric),'number')
+
+```
+
+
+3. Choose the variable that best explains by itself the SalePrice and make a scatter plot
+   + Calculate the linear correlation and store it in a new variable (cor_1)
+   + Create a data.frame (df) with the cases of var_numeric with GrLivArea belonging to quantiles 0,1% and 99,9%
+   + Repeat the correlation analysis (cor_2), and compare with cor_1; comment your results
+
+```{r}
+
+plot(var_numeric$GrLivArea, var_numeric$SalePrice); grid()
+cor_1<-with(var_numeric,cor(GrLivArea,SalePrice))
+
+lower_value<-quantile(var_numeric$GrLivArea,probs = 0.001)
+upper_value<-quantile(var_numeric$GrLivArea,probs = 0.999)
+
+df<-var_numeric[lower_value<GrLivArea&GrLivArea<upper_value]
+plot(df$GrLivArea, df$SalePrice); grid()
+cor_2<-with(df,cor(GrLivArea,SalePrice))
+
+c(cor_1,cor_2)
+
+```
+
+
+4. Analize the variable PoolArea and create a new factor variable in raw_data (has_pool)
+   + with values TRUE/FALSE if PoolArea is positive
+   + analize numerically and grafically if having a pool increases the price
+   + create a t.test to test if mean price is statistically different with pool and without it. Is it significant at 5% level of         significance? comment your results
+   + repeat the t.test specifying tha the alternative is prices of houses with pool being greater than those of houses without pool. comment your results
+
+```{r}
+raw_data[,has_pool:=factor(ifelse(PoolArea>0,TRUE,FALSE))]
+
+raw_data[,.(mean_price=mean(SalePrice)),by=has_pool]
+
+library(ggplot2)
+
+# boxplot comparative
+qplot(x=raw_data$has_pool,y=raw_data$SalePrice,geom='boxplot')
+
+# density comparative, in two separate plots
+ggplot(raw_data,aes(x=SalePrice),colour=has_pool)+geom_density()+facet_wrap(~has_pool,nrow=2)
+
+
+# density comparative, in one plot
+data<-reshape2::melt(raw_data[,.(SalePrice,has_pool)])
+ggplot(data,aes(x=value,fill=has_pool))+geom_density(alpha=0.5) 
+
+
+help(t.test)
+mean_pool_test<-t.test(raw_data[has_pool==TRUE]$SalePrice,raw_data[has_pool==FALSE]$SalePrice) # not significant at 95%
+objects(mean_pool_test)
+paste0("p_value = ",round(mean_pool_test$p.value,4))
+paste0(c("lower 95% limit = ","upper 95% limit = "),round(mean_pool_test$conf.int,0))
+
+# alternative:greater
+mean_pool_test_2<-t.test(raw_data[has_pool==TRUE]$SalePrice,raw_data[has_pool==FALSE]$SalePrice, alternative = 'g') # it's significant at 95%
+objects(mean_pool_test_2)
+paste0("p_value = ",round(mean_pool_test_2$p.value,4))
+paste0(c("lower 95% limit = ","upper 95% limit = "),round(mean_pool_test_2$conf.int,0))
+
+```
+
+
+

@@ -1,0 +1,126 @@
+---
+title: "Test 1"
+author: "Sirio Sobrino"
+date: "29/9/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Data Types
+
+1. Create a numeric variable x with numbers 1 to 10
+
+```{r}
+x<-1:10
+```
+
+2. Create a new variable, y, equal to the square of x
+
+```{r}
+y<-x^2
+```
+
+3. Store both variables forming a matrix (m) with two columns.
+   + Check the class of m
+   + Print the first 10 rows of the m
+   + Print the 4th element of y 
+
+```{r}
+m<-cbind(x,y)
+class(m)
+m[1:10,]
+m[4,'y']
+```
+
+4. Pass from matrix to a dataframe object (df)
+   + Add a new variable called z containing letters "A", and "B", repeated 5 times each
+   + Check the structure of df and its variables classes
+
+```{r}
+df<-data.frame(m)
+df$z<-c(rep('A',5),rep('B',5))
+str(df)
+```
+
+5. Coerce the variable z to a factor variable
+   + Check the structure of df and its variables classes
+
+```{r}
+df$z<-as.factor(df$z)
+```
+
+
+
+6. Subset the rows of df with numbers in x greater than 3 and z being "A", and store it in a new data.frame (df_1). Print it
+
+```{r}
+df_1<-df[df$x>3&df$z=="A",]
+```
+
+
+7. Generate a NA value in element 6th and 7th of y in df 
+   + Create a new data.frame (df_2) from df filtering the NA's in y, and keeping only columns y and z. Print it
+   + Get a summary of the variables in df_2
+
+```{r}
+df[6:7,'y']<-NA
+df_2<-df[!is.na(df$y),c('y','z')]
+df_2
+```
+
+8. Create a new data.frame (df_3) adding a new row to df_2, with values y=0, z="C". Print it
+   + Create also a new data.frame df_4 with columns x and z from df
+
+```{r}
+df_3<-rbind(df_2, data.frame(y=0,z="C"))
+df_3
+str(df_3)
+
+df_4<-df[,c('x','z')]
+```
+
+
+9. Create a new data.frame (df_5) from a subset of df_3 with y being 1, 100 or 0, 
+    and another data.frame(df_6) from a subset of df_4 with x being 3 or 9 
+   + Create a new data.frame (df_7) by merging df_6 with df_6 by variable z, but keeping all elements of df_5
+
+```{r}
+# df_3$z<-as.character(df_3$z)
+# df_4$z<-as.character(df_4$z)
+
+str(df_3)
+str(df_4)
+
+df_5<-df_3[df_3$y %in% c(1,100,0),]
+df_5 
+
+df_6<-df_4[df_4$x %in% c(3,9),]
+df_6 
+
+df_7<-merge(df_5,df_6, by='z', all.x=T)
+df_7
+str(df_7)
+```
+
+
+10. Create a list containing all the data types generated
+    + Check the structure of the list
+    + Save the list in your current wf as ar .RData file
+    + Save the element 'm' of the list in a .csv file and in a .xlsx file
+    
+```{r}
+output_list<-list(x,y,m,df,df_1,df_2,df_3,df_4,df_5,df_6,df_7)
+str(output_list)
+
+saveRDS(output_list,'output_list.RData')
+
+write.csv(output_list[[3]],'output_list.csv')
+
+require(xlsx)
+# write.xlsx(output_list[[3]],'output_list.xlsx')
+
+```
+    

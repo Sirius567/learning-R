@@ -1,0 +1,148 @@
+---
+title: "08_Descriptve_Analysis"
+author: "SirioSobrino"
+date: "11/9/2017"
+output: html_document
+---
+
+```{r setup, include=T}
+knitr::opts_chunk$set(echo = T)
+```
+
+#### Summarizing a Variable: univariate and bivariate
+#### Quantiles and Outlier Detection
+#### Variance, Covariance and Linear Correlation
+
+Lets's start donwloading the House Prices dataset from <http://rmarkdown.rstudio.com>. Then read it.
+
+```{r raw_data_reading, echo=T}
+.libPaths("/home/daadmin/R/x86_64-redhat-linux-gnu-library/3.2")
+library(data.table)
+library(knitr)
+library(stargazer)
+raw_data<-readRDS('AmesHousing_pro.RData')
+```
+
+## dataset summary
+
+```{r raw_data_summary, echo=T}
+str(raw_data)
+if(length(unique(raw_data$PID))==nrow(raw_data)) print('PID is a unique index')
+head(raw_data) 
+knitr::kable(head(raw_data[,1:8,with=F],n=5))  # fancy table display
+```
+
+## single variable analysis
+
+```{r single_variable, echo=T}
+
+y<-as.numeric(raw_data$SalePrice) 
+cat('y summary: ',summary(y))
+quantile(y, seq(0,1,0.1))
+y[1]
+library(ggplot2)
+library(gridExtra)
+
+p0_y<-qplot(x=1:nrow(raw_data),y=y, geom='point')
+p1_y<-qplot(y, geom='histogram')
+p2_y<-qplot(y, geom='density')
+p3_y<-qplot(y, x= 1, geom = "boxplot")
+p_y<-list(p0_y,p1_y, p2_y, p3_y)
+marrangeGrob(p_y, nrow=2, ncol=2)
+
+# lets calculate the more important statistics of a variable: mean and standard deviation
+y_mean<-mean(y)
+y_sd<-sd(y)
+
+# and calculate the Cooef. of Variation
+print(paste0('Coeff. of Variation = ', 100*round(y_sd/y_mean, 2),'%'))
+
+# outlier detection: lets mark every house with a price superior to 95% of all prices:
+extreme_prices<- y>=quantile(y,0.95)
+sum(extreme_prices)
+sum(extreme_prices)/length(y)
+plot(y, pch=19, xlab=''); grid()
+points(y*as.numeric(extreme_prices),col='red')
+points(rep(0,length(y)),col='white')
+
+# As we can derive from the univariate analysis, sale prices are highly 
+# right-skeed
+# the smallest the variance, the more representative becomes the mean from the population, but 
+# the distribution should ideally be centered
+
+# lets try taking logarithms on sale price
+
+ln_y<-log(y)
+
+p0_ln<-qplot(x=1:nrow(raw_data),y=ln_y, geom='point')
+p1_ln<-qplot(ln_y, geom='histogram')
+p2_ln<-qplot(ln_y, geom='density')
+p3_ln<-qplot(ln_y, x= 1, geom = "boxplot")
+p_ln<-list(p0_ln,p1_ln,p2_ln,p3_ln)
+marrangeGrob(p_ln, nrow=2, ncol=2)
+
+```
+
+
+## by-variate analysis
+
+lets take the living area surface (square feet) and sale price (dolars) and analize their relationship
+
+```{r bi_variable, echo=T}
+
+df<-raw_data[,.(PID,x=GrLivArea, y=SalePrice)]
+head(df)
+
+p1<-qplot(df$x,geom='density')
+p2<-qplot(df$y,geom='density')
+p4<-ggplot(df,aes(x=x,y=y))+geom_point()
+p<-list(p1,p2)
+marrangeGrob(p, nrow=2, ncol=1)
+print(p4+ggtitle('Living Area Surface Vs Price'))
+
+with(df,cov(x,y))  
+
+with(df,cor(x,y))
+attach(df)
+cor(x,y)==cov(x,y)/(sd(x)*sd(y))
+
+lm(y~x)$coef['x']
+detach(df)
+
+```
+
+We can also display interactive charts based on ggplot, via the ggplotly package
+```{r interactive_plot,echo=T, message=F}
+
+library(plotly)
+
+ggplotly(ggplot(df,aes(x=x,y=y))+geom_point(),
+         width = 600, height = 400)
+ggplotly(ggplot(df,aes(x=x,y=y))+geom_point()+stat_smooth(method='auto'),
+         width = 600, height = 400)
+
+```
+
+
+
+Correlation Matrix: a matrix indicating all pairwise linear correlation of a set of variables
+
+```{r correlation_matrix, echo=T}
+library(corrplot)
+
+data_sample<-raw_data[,.(SalePrice,
+                         GrLivArea,
+                         GarageArea,
+                         TotalBsmtSF,
+                         BsmtUnfSF,
+                         BsmtFinSF1,
+                         LotArea)]
+head(data_sample)
+corrplot(cor(data_sample[complete.cases(data_sample)]), method = 'number', tl.col = 'black')
+
+library(GGally)
+
+p<-GGally::ggpairs(data_sample[complete.cases(data_sample)],axisLabels = 'none',size=1,lwd=0.5)
+ggplotly(p, width = 800, height = 500)
+
+```
