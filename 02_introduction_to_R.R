@@ -16,7 +16,7 @@ x
 
 # TYPES OF VARIABLES
 
-# 5 basic type of variables in R: numeric, integer, logical, character y factor
+# 5 basic type of variables in R: numeric, integer, logical, character and factor
 
 # coertion methods in R allow us to easily swicth the nature of a variable
 # as.numeric(), as.integer(), as.logical(), as.character(), as.factor()
@@ -82,7 +82,7 @@ x
 
 x<-c(1,2,3,4,5)
 
-# c() foces to the same class of variable
+# c() forces to the same class of variable
 
 x<-c(1,2,'a',TRUE)
 
@@ -132,7 +132,7 @@ x[which.min(x)] # equivalent to min(x)
 
 # summary: applied to a numeric vector, returns a basic statistic summary
 
-summary(x<-c(6,4,5,3,6,5,7,3,5,5))  # se puede definir un vector sobre la marcha
+summary(x<-c(6,4,5,3,6,5,7,3,5,5))  # we can define a vector on the fly
 
 summary(c(2,3,NA))
 
@@ -180,5 +180,7 @@ order(x)
 
 paste('a','b','c',sep=' ')
 paste0('a','b','c')
+
+
 
 
