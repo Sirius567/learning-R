@@ -57,6 +57,8 @@ if(2>1) {
 
 even_number<-function(number){
   
+  if(!is.numeric(number)) { stop('Not a number')}
+  
   if(number%%2==0 & number!=0){
     print(paste0(number, ' is even'))
   } else if (number%%2!=0){
@@ -77,7 +79,7 @@ even_number(0)
 
 even_number(number=seq(1:10))  # if statemets only apply to vectors of length 1
 
-# we could use a loop to iterate the if condition over a vectos, 
+# we could use a loop to iterate the if condition over a vector, 
 # but in this case we would directly use the vectorised ifelse function
 
 x<-c(1:10)
@@ -106,7 +108,7 @@ for ( i in 1:10) {
   results[i]<-even_number(i)
 }
 
-# load the state datadet
+# load the state dataset
 
 str(state.x77)
 
@@ -119,6 +121,8 @@ names(winner)<-colnames(state.x77)
 for (i in 1:ncol(state.x77)){
   winner[i]<-rownames(state.x77)[which.max(state.x77[,i])]
 }
+
+winner
 
 # many times we can achive this task by using much more simple vectorised functions
 rownames(state.x77)[apply(state.x77,2,which.max)]
@@ -169,7 +173,7 @@ sort(distances['NY',],decreasing=F)
 
 # in while loops, you iterate a statement until some logical condition is met
 
-k=-10
+k=0
 while( k <= 10 ){
   even_number(k)
   k<-k+1
@@ -188,6 +192,7 @@ is.prime<-function(integer){
 
 is.prime(integer=10)
 is.prime(integer=31)
+is.prime(integer=4183911)
 
 
 # creating a fibbonaci sequence calculator
@@ -198,12 +203,12 @@ fib<-function(integer){
   while(length(result)<integer){
     result[k+2]=result[k+1]+result[k]
     k<-k+1
-    print(length(result))
   }
   return(result)
 }
 
-plot(fib(5)) 
+fib(15)
+plot(fib(15)) 
 
 recurse_fibonacci <- function(n) {
   if(n <= 1) {
@@ -213,10 +218,15 @@ recurse_fibonacci <- function(n) {
   }
 }
 
-recurse_fibonacci(130)
+recurse_fibonacci(13)
 
 
 # LAPPLY FAMILY OF FUNCTIONS
+
+apply(distances,2,mean)
+apply(distances,1,mean)
+
+
 
 
 

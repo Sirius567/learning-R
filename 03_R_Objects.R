@@ -17,7 +17,7 @@
 
 # matrix operations are very optimised though
 
-# let's create a matix matrix
+# let's create a matrix
 
 m<-matrix(seq(1,12),nrow=3,ncol=4)
 n<-matrix(seq(1,12),nrow=3,byrow=T)
@@ -128,7 +128,7 @@ ncol(mtcars)
 
 mtcars$mpg
 
-# with $ we can create a new variable on the fly
+# with $ we can create a new variable
 
 mtcars$model<-rownames(mtcars)
 
@@ -150,7 +150,6 @@ mtcars['Toyota Corolla','hp']
 #subseting through logical conditions
 
 mtcars[cyl>6,] # gives an error, we need to call the cyl variable with $
-mtcars['cyl'>6,] # or..
 mtcars[mtcars$cyl>6,]
 
 mtcars[mtcars$mpg>15&mtcars$hp>150,c('wt','disp')]
@@ -158,7 +157,7 @@ mtcars[mtcars$mpg>15&mtcars$hp>150,c('wt','disp')]
 subset(mtcars,hp>100&hp<200) # can use the subset function for simplicity of reading
 
 subset(mtcars,subset=wt>=4,select=c('drat','mpg','wt'))
-subset(mtcars,subset=wt>=4,select=1:5,drop=F)
+subset(mtcars,subset=wt>=4,select=1:5)
 subset(mtcars,subset=wt>=4,select=-c(1:5))
 
 mtcars[order(mtcars$mpg),]
@@ -192,7 +191,6 @@ unique(mtcars$cyl)
 length(mtcars$disp)-length(unique(mtcars$disp))
 
 mtcars[duplicated(mtcars),]
-mtcars[-duplicated(mtcars),]
 
 
 # NA treatment

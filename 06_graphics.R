@@ -70,7 +70,7 @@ state_data$Region<-state.region
 boxplot(state_data$Life)
 boxplot(state_data$Life~state_data$Region,
         col=c('red','orange','forestgreen','royalblue2'), 
-        main='Life Expectancy by Region',notch=T); grid()
+        main='Life Expectancy by Region'); grid()
 
 summary(state_data[state_data$Region=='South',]$Life.Exp)
 
@@ -121,7 +121,7 @@ legend('topright',
 
 
 # a usualy simpler option for visualizing multiple series in 
-# one chart is to it in just one axis, and probably you first
+# one chart is to do it in just one axis, and probably you first
 # need to scale the series (to equal mean and variance)
 dev.off()
 plot(state_data$Income,type='o',col='black', main='Income (1977)',
@@ -130,11 +130,12 @@ axis(1,at=1:nrow(state_data),labels = rownames(state_data),las=2)
 
 lines(state_data$Area,col='blue')  # lines() adds a new line to an existing plot
 
+# now scaling the variables
 plot(scale(state_data$Income),type='o',col='black', main='Income (1977)',
      xlab='',ylab='Income',xaxt='n'); grid()
 axis(1,at=1:nrow(state_data),labels = rownames(state_data),las=2)
 
-lines(scale(state_data$Area),col='blue')  # lines() adds a new line to an existing plot
+lines(scale(state_data$Area),col='blue')  
 
 
 

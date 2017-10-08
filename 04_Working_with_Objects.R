@@ -92,3 +92,6 @@ tail(state_data$complete_data,n=10)
 b<-state_data$complete_data[state_data$complete_data$Income>=4500,c('name','Income','region')]
 b
 
+
+
+
