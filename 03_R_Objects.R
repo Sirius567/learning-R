@@ -50,12 +50,11 @@ B <- matrix(runif(9),nrow=3,ncol=3)
 
 b <- c(4,2,1)
 
+t(A)	# Transpose
 A * B	# Element-wise multiplication
 t(A) %*% B	# Matrix multiplication
-A %o% B	# Outer product. AB'
 crossprod(A,B)
 crossprod(A)	# A'B and A'A respectively.
-t(A)	# Transpose
 diag(2,5)	# Creates diagonal matrix with elements of x in the principal diagonal
 diag(A)	# Returns a vector containing the elements of the principal diagonal
 diag(k)	# If k is a scalar, this creates a k x k identity matrix
@@ -184,7 +183,7 @@ cbind(id=seq(1,nrow(mtcars)),mtcars)
 
 mtcars<-rbind(mtcars,mtcars[nrow(mtcars),])
 
-# duplicados
+# duplicates
 
 unique(mtcars)
 unique(mtcars$cyl)
@@ -195,7 +194,7 @@ mtcars[duplicated(mtcars),]
 
 # NA treatment
 complete.cases(mtcars4)
-mtcars4[complete.cases(mtcars4)]
+mtcars4[complete.cases(mtcars4),]
 
 is.na(mtcars4)
 mtcars4[is.na(mtcars4$new_variable),]
@@ -226,10 +225,9 @@ a<-list(letters=letters[1:10],df=mtcars,x=1)
 
 str(a)
 
-# para acceder a las lists se emplea también $, siempre que los elementos
-# de la list esten nombrados 
-# mediante [[]] podemos acceder tanto por nombre como por posicion
-# ademas [] permite obtener un subconjunto de la list
+# you can access list elements by using $, but only if the elements are named
+# through [[]] we can access elements by name and by its position in the list
+# besides, with [] we get a slice of the original list
 
 # accesing elemnts in a list
 
