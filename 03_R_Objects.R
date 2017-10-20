@@ -22,24 +22,27 @@
 m<-matrix(seq(1,12),nrow=3,ncol=4)
 n<-matrix(seq(1,12),nrow=3,byrow=T)
 
+m
+n
+
 dim(m)
 
 colnames(m)<-paste0(rep('col',4),seq(1,4))
 rownames(m)<-paste0(rep('row',3),seq(1,3))
 
-attributes(m) # shows us the slots in object m
+attributes(m) 
 
 # matrix accesing and subsetting:
 
 m[3,2] # returns element of row 3 and column 2
-m[,1] # returns all rows of the first column (a vector)
-m[1,] # returns all columns of the first row (a vector)
+m[ ,1] # returns all rows of the first column (a vector)
+m[1, ] # returns all columns of the first row (a vector)
 
 
 m[c(1,3),]
 m[1:2,seq(2,3)]
 
-# we can also subset a (named) matrix by name
+# we can also subset a (named) matrix by column or row name
 m[,'col3']
 
 
@@ -100,7 +103,7 @@ df$v_1
 
 # matrix subsetting is also allowed
 
-df[,1]
+df[ ,1]
 df[3,2]
 
 # importing a native R dataset (just by calling data(x)...see library(help = "datasets"))
@@ -167,6 +170,8 @@ aggregate(x=mtcars,FUN = mean, by=list(carb=factor(mtcars$carb)))
 
 b<-data.frame(model=mtcars$model,new_variable=rnorm(nrow(mtcars)))
 
+head(b)
+
 mtcars2<-merge(x=mtcars,y=b,by='model')   # inner join
 mtcars3<-merge(x=mtcars,y=b[1:10,],by='model')  # inner join
 mtcars4<-merge(x=mtcars,y=b[1:10,],all.x=TRUE, by='model')  # left join
@@ -183,13 +188,15 @@ cbind(id=seq(1,nrow(mtcars)),mtcars)
 
 mtcars<-rbind(mtcars,mtcars[nrow(mtcars),])
 
+mtcars
+
 # duplicates
 
 unique(mtcars)
 unique(mtcars$cyl)
 length(mtcars$disp)-length(unique(mtcars$disp))
 
-mtcars[duplicated(mtcars),]
+mtcars[duplicated(mtcars), ]
 
 
 # NA treatment
