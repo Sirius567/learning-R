@@ -19,28 +19,30 @@ data_mtcars  # better display, but lost rownames!
 data_mtcars<-cbind(model=rownames(mtcars),data_mtcars) # still a data.table
 
 data_mtcars[mpg>=20,list(model,mpg,hp)]   # no need to preceed with $ the variable names
-data_mtcars[mpg>=20,c('model','mpg','hp')]
-
-# we can make groupped opperation on the fly
-data_mtcars[,carb:=as.factor(carb)]
-data_2<-data_mtcars[mpg>=20,list(n=.N,mean_mpg=mean(mpg),mean_hp=mean(hp)),by='carb']
-data_2
+data_mtcars[mpg>=20,c('model','mpg','hp'),with=F]
+data_mtcars[mpg>=20,c(1,2,3)]
 
 # add a new column
-
 data_mtcars[,new_variable:=seq(1,nrow(mtcars))]
 data_mtcars[mpg>=20,new_variable2:='mpg >= 20']
 
 # delete a column
 data_mtcars[,new_variable:=NULL]
 
+# we can make groupped opperation on the fly
+data_mtcars[,carb:=as.factor(carb)]
+data_2<-data_mtcars[mpg>=20,list(n=.N,mean_mpg=mean(mpg),mean_hp=mean(hp)),by='carb']
+data_2
+
+
+
 
 # merges with data.table
 
 data_3<-data.table(x=runif(6),model=data_mtcars$model[sample(nrow(data_mtcars),6)])
 
-setkeyv(data_mtcars,'model')
-setkeyv(data_3,'model')
+setkey(data_mtcars,model)
+setkey(data_3,model)
 
 # inner join
 data_3[data_mtcars, nomatch=0]
@@ -77,20 +79,19 @@ str(raw_data)
 summary(raw_data$SalePrice)
 
 # change all column names eliminating spaces
-names(raw_data)<-gsub(" ", "_", names(raw_data), fixed = TRUE)
+names(raw_data)<-gsub(pattern=" ",replacement = "_", x=names(raw_data), fixed = TRUE)
 
 # set all character columns to factor variables
-
 char_to_factor<-function(var){
   if(is.character(var)){
-    var<-as.factor(as.character(var))
+    return(var<-as.factor(as.character(var)))
   } else {
     return(var)
   }
 }
 
 # the traditional way
-for ( i in 1:ncol(raw_data)){
+for (i in 1:ncol(raw_data)){
   if(is.character(raw_data[[i]])){
     raw_data[[i]]<-as.factor(raw_data[[i]])
   }
@@ -100,7 +101,7 @@ str(raw_data)
 
 # the data.table way
 # rerun from line 73 to 80
-raw_data[, names(raw_data)[sapply(raw_data,is.character)]:= lapply(.SD, as.factor), .SDcols=sapply(raw_data,is.character)]
+raw_data[, names(raw_data)[sapply(raw_data,is.character)]:= lapply(.SD, as.factor), .SDcols=names(raw_data)[sapply(raw_data,is.character)]]
 str(raw_data)
 
 raw_data[, names(raw_data)[sapply(raw_data,is.integer)]:= lapply(.SD, as.numeric), .SDcols=sapply(raw_data,is.integer)]

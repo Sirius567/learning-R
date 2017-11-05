@@ -9,7 +9,7 @@
 # OBJECTS AND DATA CONTEINERS IN R
 
 ###########################################################
-# MATRIX
+# MATRIX ####
 
 # is the most basic data structure in R, allowing only for 
 # numeric variables.
@@ -26,6 +26,9 @@ m
 n
 
 dim(m)
+
+nrow(m)
+ncol(m)
 
 colnames(m)<-paste0(rep('col',4),seq(1,4))
 rownames(m)<-paste0(rep('row',3),seq(1,3))
@@ -79,7 +82,7 @@ colSums(A)	# Returns vector of column sums
 
 
 ###########################################################
-# DATA.FRAME
+# DATA.FRAME ####
 
 # similar to matrix but allows for different types of variables
 # all variables must be of the same length
@@ -104,14 +107,14 @@ df$v_1
 # matrix subsetting is also allowed
 
 df[ ,1]
-df[3,2]
+df[5,2]
 
 # importing a native R dataset (just by calling data(x)...see library(help = "datasets"))
 data("mtcars")
 
 mtcars
 
-head(mtcars,n=10)
+head(mtcars,1)
 tail(mtcars,n=10)
 
 str(mtcars)
@@ -134,6 +137,14 @@ mtcars$mpg
 
 mtcars$model<-rownames(mtcars)
 
+# to remove a variable we can either assign it a NULL value
+
+mtcars$model<-NULL
+
+# or explicitly eliminate it by its position
+mtcars$model<-rownames(mtcars)
+# mtcars<-mtcars[,-ncol(mtcars)]
+
 # accesing and subsetting
 
 head(mtcars)
@@ -147,7 +158,7 @@ mtcars[1] # if we only specified one argument it will return a slice of the data
 
 mtcars[1:3,]
 
-mtcars['Toyota Corolla','hp']
+mtcars['Toyota Corolla',c('hp','mpg')]
 
 #subseting through logical conditions
 
@@ -162,24 +173,26 @@ subset(mtcars,subset=wt>=4,select=c('drat','mpg','wt'))
 subset(mtcars,subset=wt>=4,select=1:5)
 subset(mtcars,subset=wt>=4,select=-c(1:5))
 
-mtcars[order(mtcars$mpg),]
+mtcars[order(mtcars$mpg), ]
+
+# aggregated operations (group by)
 
 aggregate(x=mtcars,FUN = mean, by=list(carb=factor(mtcars$carb)))
 
 # merging tables
 
-b<-data.frame(model=mtcars$model,new_variable=rnorm(nrow(mtcars)))
+b<-data.frame(id_2=mtcars$model,new_variable=rnorm(nrow(mtcars)))
 
 head(b)
 
 mtcars2<-merge(x=mtcars,y=b,by='model')   # inner join
 mtcars3<-merge(x=mtcars,y=b[1:10,],by='model')  # inner join
 mtcars4<-merge(x=mtcars,y=b[1:10,],all.x=TRUE, by='model')  # left join
-mtcars4<-merge(x=mtcars,y=b[1:10,],all.x=TRUE, by.x='model',by.y='model')
+mtcars4<-merge(x=mtcars,y=b[1:10,],all.x=TRUE, by.x='model',by.y='id_2')
 
-b$new_gear=sample(c(3,4),nrow(b),replace = T)
+b$new_gear<-sample(c(3,4),nrow(b),replace = T)
 
-mtcars5<-merge(x=mtcars,y=b,by.x=c('model','gear') ,by.y=c('model','new_gear'))
+mtcars5<-merge(x=mtcars,y=b,by.x=c('model','gear') ,by.y=c('id_2','new_gear'))
 
 
 # rbind & cbind
@@ -201,7 +214,7 @@ mtcars[duplicated(mtcars), ]
 
 # NA treatment
 complete.cases(mtcars4)
-mtcars4[complete.cases(mtcars4),]
+mtcars4[complete.cases(mtcars4), ]
 
 is.na(mtcars4)
 mtcars4[is.na(mtcars4$new_variable),]
@@ -221,7 +234,7 @@ apply(mtcars[,-ncol(mtcars)],c(1,2),mean)
 
 
 ###########################################################
-# LISTS
+# LISTS ####
 
 # lists represent the most generic and flexible data containers in r
 # a list is a set of ordered (and maybe named) objects of different type
@@ -264,7 +277,7 @@ lapply(a, summary)
 
 
 ###########################################################
-# saving data objects
+# saving data objects ####
 
 # write.csv/write.table for matrices and data.frames
 write.csv(x = m, file = 'example_matrix.csv')

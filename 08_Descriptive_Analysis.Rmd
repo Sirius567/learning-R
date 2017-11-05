@@ -16,10 +16,10 @@ knitr::opts_chunk$set(echo = T)
 Lets's start donwloading the House Prices dataset from <http://rmarkdown.rstudio.com>. Then read it.
 
 ```{r raw_data_reading, echo=T}
-.libPaths("/home/daadmin/R/x86_64-redhat-linux-gnu-library/3.2")
+# .libPaths("/home/daadmin/R/x86_64-redhat-linux-gnu-library/3.2")
 library(data.table)
 library(knitr)
-library(stargazer)
+# library(stargazer)
 raw_data<-readRDS('AmesHousing_pro.RData')
 ```
 
@@ -90,7 +90,7 @@ lets take the living area surface (square feet) and sale price (dolars) and anal
 
 ```{r bi_variable, echo=T}
 
-df<-raw_data[,.(PID,x=GrLivArea, y=SalePrice)]
+df<-raw_data[,.(PID,x=Gr_Liv_Area, y=SalePrice)]
 head(df)
 
 p1<-qplot(df$x,geom='density')
@@ -111,15 +111,17 @@ detach(df)
 
 ```
 
-We can also display interactive charts based on ggplot, via the ggplotly package
+
 ```{r interactive_plot,echo=T, message=F}
+# We can also display interactive charts based on ggplot, via the ggplotly package
+# library(plotly)
 
-library(plotly)
-
-ggplotly(ggplot(df,aes(x=x,y=y))+geom_point(),
-         width = 600, height = 400)
-ggplotly(ggplot(df,aes(x=x,y=y))+geom_point()+stat_smooth(method='auto'),
-         width = 600, height = 400)
+# ggplotly(
+  # ggplot(df,aes(x=x,y=y))+geom_point()
+  # ,width = 600, height = 400)
+# ggplotly(
+  # ggplot(df,aes(x=x,y=y))+geom_point()+stat_smooth(method='auto')
+  # ,width = 600, height = 400)
 
 ```
 
@@ -131,18 +133,19 @@ Correlation Matrix: a matrix indicating all pairwise linear correlation of a set
 library(corrplot)
 
 data_sample<-raw_data[,.(SalePrice,
-                         GrLivArea,
-                         GarageArea,
-                         TotalBsmtSF,
-                         BsmtUnfSF,
-                         BsmtFinSF1,
-                         LotArea)]
+                         Gr_Liv_Area,
+                         Garage_Area,
+                         Total_Bsmt_SF,
+                         Bsmt_Unf_SF,
+                         BsmtFin_SF_1,
+                         Lot_Area)]
 head(data_sample)
 corrplot(cor(data_sample[complete.cases(data_sample)]), method = 'number', tl.col = 'black')
 
 library(GGally)
 
 p<-GGally::ggpairs(data_sample[complete.cases(data_sample)],axisLabels = 'none',size=1,lwd=0.5)
-ggplotly(p, width = 800, height = 500)
+p
+# ggplotly(p, width = 800, height = 500)
 
 ```

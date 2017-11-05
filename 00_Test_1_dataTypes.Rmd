@@ -1,9 +1,17 @@
 ---
-title: "Test 1"
+title: "Test 1 - Data Types"
 author: "Sirio Sobrino"
-date: "29/9/2017"
-output: html_document
+date: "november 2017"
+output:
+  html_document: default
+  pdf_document: default
 ---
+
+```{r, echo=FALSE, out.width = "50px"}
+knitr::include_graphics("C:/Users/sirio/Documents/learning-R/ie.png")
+setwd("C:/Users/sirio/Documents/learning-R")
+```
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -73,26 +81,15 @@ df_2
 
 8. Create a new data.frame (df_3) adding a new row to df_2, with values y=0, z="C". Print it
    + Create also a new data.frame df_4 with columns x and z from df
+   + Create a new data.frame (df_5) from a subset of df_3 with y being 1, 100 or 0, 
+    and another data.frame(df_6) from a subset of df_4 with x being 3 or 9 
 
 ```{r}
 df_3<-rbind(df_2, data.frame(y=0,z="C"))
 df_3
-str(df_3)
 
 df_4<-df[,c('x','z')]
-```
-
-
-9. Create a new data.frame (df_5) from a subset of df_3 with y being 1, 100 or 0, 
-    and another data.frame(df_6) from a subset of df_4 with x being 3 or 9 
-   + Create a new data.frame (df_7) by merging df_6 with df_6 by variable z, but keeping all elements of df_5
-
-```{r}
-# df_3$z<-as.character(df_3$z)
-# df_4$z<-as.character(df_4$z)
-
-str(df_3)
-str(df_4)
+df_4
 
 df_5<-df_3[df_3$y %in% c(1,100,0),]
 df_5 
@@ -100,13 +97,45 @@ df_5
 df_6<-df_4[df_4$x %in% c(3,9),]
 df_6 
 
-df_7<-merge(df_5,df_6, by='z', all.x=T)
-df_7
-str(df_7)
 ```
 
 
-10. Create a list containing all the data types generated
+9. Create a new data.frame (df_7) by merging df_6 with df_6 by variable z, but keeping all elements of df_5
+
+```{r}
+df_7<-merge(df_5,df_6, by='z', all.x=T)
+df_7
+```
+
+
+
+10. Read the file df_states.csv (from the previous sessions) and assign it to df_states. Check that it’s now a data.frame
+  + Create and additional variable in df_2, named state, with values: "Alabama", "California", "Texas", "Colorado", "Winsconsin", "Nevada", "Arizona" and "Montana".
+
+   
+```{r}
+df_states<-read.csv('df_states.csv',sep=';')
+str(df_states)
+
+df_2$state<-c("Alabama", "California", "Texas", "Colorado", "Wisconsin", "Nevada", "Arizona" , "Montana")
+
+head(df_2)
+
+
+df_merged_1<-merge(df_2,df_states,by.x='state',by.y='name')
+df_merged_1
+
+df_merged_2<-merge(df_2,df_states,by.x='state',by.y='name',all.y=T)
+df_merged_2
+
+df_merged_3<-merge(df_2,df_states,by.x='state',by.y='name',all=T)
+df_merged_3
+```
+
+
+
+#### Optional
++ Create a list containing all the data types generated
     + Check the structure of the list
     + Save the list in your current wf as ar .RData file
     + Save the element 'm' of the list in a .csv file and in a .xlsx file
@@ -117,10 +146,8 @@ str(output_list)
 
 saveRDS(output_list,'output_list.RData')
 
-write.csv(output_list[[3]],'output_list.csv')
+write.csv(output_list[[3]],'m.csv')
 
-require(xlsx)
-# write.xlsx(output_list[[3]],'output_list.xlsx')
 
 ```
     

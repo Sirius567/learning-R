@@ -7,6 +7,70 @@
 # Forecasting
 
 
+# let's simmulate a variable relationship
+
+set.seed(648315)
+
+u<-1*rnorm(100)
+hist(u)
+
+x<-5+100*runif(100)
+hist(x)
+
+alpha<-2
+beta<-0.5
+
+y<-alpha+beta*x+u
+
+hist(y)
+summary(y)
+
+plot(x,y);grid()
+abline(a=alpha,b=beta,col='blue')
+
+lm_simulated<-lm(y~x)
+summary(lm_simulated)
+
+
+### we create a function that varies the size of the sample and
+# computes the regression
+
+f_sample_sim<-function(n=100,sd_resid=1){
+  
+  set.seed(64815)
+  u<-sd_resid*rnorm(n)
+  
+  x<-5+100*runif(n)
+
+  alpha<-2
+  beta<-0.5
+  
+  y<-alpha+beta*x+u
+  
+  lm_sim<-lm(y~x)
+  
+  return(lm_sim)
+}
+
+dev.off()
+beta_vector<-c()
+alpha_vector<-c()
+levels_size<-1:1000
+plot(levels_size,rep(0.5,length(levels_size)),type='l',xlab='size of sample',ylab='Coefficient Estimate',lwd=2); grid()
+for(i in seq_along(levels_size)){
+  # Sys.sleep(0.05)
+  alpha_vector<-c(alpha_vector,f_sample_sim(levels_size[i],sd_resid = 1)$coef[1])
+  beta_vector<-c(beta_vector,f_sample_sim(levels_size[i],sd_resid = 1)$coef[2])
+  # points(i,beta_vector[i],col='red',pch=19,size=20,alpha=0.75)
+}
+
+par(mfrow=c(2,1))
+plot(alpha_vector,type='l',xlab='size of sample',ylab='Alpha Coefficient Estimate',lwd=2); grid()
+abline(a=2,b=0,col='green')
+plot(beta_vector,type='l',xlab='size of sample',ylab='Beta Coefficient Estimate',lwd=2); grid()
+abline(a=0.5,b=0,col='green')
+
+
 # we'll make use of the mtcars dataset
 library(data.table)
 library(ggplot2)
@@ -16,17 +80,15 @@ raw_data<-data.table(model=rownames(mtcars),mtcars)
 
 head(raw_data)
 str(raw_data)
-lapply(raw_data,function(x) summary(as.factor(x)))
 
 
-raw_data[,c('vs','am','gear','carb'):=list(as.factor(vs),
-                                   as.factor(am),
-                                   as.factor(gear),
-                                   as.factor(carb))]
+variables_to_factor<-c('vs','am','gear','carb')
+raw_data[,eval(variables_to_factor):=lapply(.SD,as.factor),.SDcols=variables_to_factor]
 
 str(raw_data)
 
 summary(raw_data$disp)
+summary(raw_data$carb)
 
 
 pairs(raw_data[,.(mpg,cyl,disp,hp,qsec)])
@@ -67,7 +129,7 @@ summary(simple_model_1)
 # P-value from the contrast of individual significance.
 
 # The null hipothesis is coef(hp) = 0, with the alternative hipothesis being coef(hp)!=0
-# If we set a level the significance to 5%, we reject the null hipothesis (hp is "significant")
+# If we set a level the significance to 5%, we reject the null hipothesis (so hp is "significant")
 # In this case we can reject the hipothesis of insignificance for hp even al a 1% (99% of confidence)
 
 # create a 95% interval for the hp coefficient estimate
@@ -78,6 +140,9 @@ pivot_value<-qt(0.975,df=simple_model_1$df.residual)
 CI_95<-c(mean_coef-pivot_value*std_coef,mean_coef+pivot_value*std_coef)
 CI_95
 
+# lets check it
+confint(simple_model_1,parm = 'hp', level = 0.95)
+
 # create a function that takes this simple model, and a level of significance (alpha)
 # and returns the Confidence Interval estimation of hp coefficient.
 
@@ -86,7 +151,7 @@ CI_95
 
 fit_1<-simple_model_1$fitted
 
-par(mar=c(8,3.5,3.5,1))
+par(mar=c(8,3.5,3.5,1),mfrow=c(1,1))
 plot(raw_data$mpg, type='o', xlab='',ylab='',xaxt='n',lwd=2,pch=19, main='Simple Model Fit'); grid()
 axis(1,at=1:nrow(raw_data),labels = raw_data$model,las=2)
 lines(simple_model_1$fitted,col='red',type='o',lwd=2,pch=19)
@@ -126,10 +191,10 @@ axis(1,at=1:nrow(raw_data),labels = raw_data$model,las=2)
 hist(resids_simple_1)
 
 # plot 3 
-boxplot(resids_simple_1); grid()
+boxplot(resids_simple_1,main='boxplot'); grid()
 
 # plot 4 
-qqnorm(resids_simple_1)
+qqnorm(resids_simple_1); grid()
 
 # pick another explanatory variable, say "disp", and generate another simple model
 # replicate the analysis done: interpretation, CI and significance of the slope
@@ -186,5 +251,6 @@ boxplot(resids_multi_1); grid()
 qqnorm(resids_multi_1)
 
 
+shapiro.test(resids_multi_1)
 
 

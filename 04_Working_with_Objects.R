@@ -20,7 +20,7 @@ head(state.region)
 head(state.x77)
 
 # create a list named state_data containing all datasets loaded with data(state), 
-# naming its element with the individual names
+# naming each element with the individual names
 
 state_data<-list(state.abb=state.abb,
      state.area=state.area,
@@ -37,7 +37,7 @@ str(state_data)
 
 # transform all elemnts of the list to data.frames, with 
 # and variable names as colnames, and create a new element of the 
-# list creating a complete dataset with all variables except for state.center data.frame
+# list creating a complete dataset with all variables except for state.center
 
 state_data<-lapply(state_data,as.data.frame)
 str(state_data)

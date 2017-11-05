@@ -14,7 +14,7 @@ data(state)
 state_data<-data.frame(state.x77)
 
 
-# R BASE CHARTS
+# R BASE CHARTS ####
 
 # managing the plotting space layout
 
@@ -35,6 +35,13 @@ plot(runif(10),col='green',main='chart 3')
 plot(runif(10),col='blue',main='chart 4')
 
 # see help(layout) for a more flexible design
+layout(matrix(c(1,1,0,2), 2, 2, byrow = TRUE))
+layout.show(2)
+plot(1:10)
+plot(2:34)
+
+nf <- layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE), respect = TRUE)
+layout.show(1:3)
 
 dev.off() # this clears all graphics and sets default layout 
 
@@ -48,7 +55,7 @@ barplot(state_data[order(-state_data$Life.Exp),]$Life.Exp, ylim=c(65,75),xpd=FAL
         names.arg=rownames(state_data[order(-state_data$Life.Exp),]),
         las=2, col='cornflowerblue',
         main='Life Expectancy (1977)'); grid()
-legend(45,75,lwd=2,legend=c('L.E','Mean'),col=c('cornflowerblue','red'))
+legend(45,75,fill=c('cornflowerblue','red'),legend=c('L.E','Mean'))
 abline(h=mean(state_data$Life.Exp),col='red')
 text(50,mean(state_data$Life.Exp)+0.25,'Mean',col='red')
 
@@ -112,12 +119,12 @@ axis(1,at=1:nrow(state_data),labels = rownames(state_data),las=2)
 par(new = T)
 plot(state_data$Area/1000,type='o',col='blue',
      axes = FALSE, bty = "n", xlab = "", ylab = "")
-axis(side=4, at = pretty(range(state_data$Area/1000)),col='blue')
+axis(side=4, at = pretty(range(state_data$Area/1000)))
 axis(1,at=1:nrow(state_data),labels = rownames(state_data),las=2)
 mtext(side = 4, line=3, 'Area',col='blue')
 legend('topright',
        legend=c('Income','Area'),
-       lwd=1, col=c("blue", "black"))
+       lwd=1, col=c("black", "blue"))
 
 
 # a usualy simpler option for visualizing multiple series in 
@@ -189,10 +196,11 @@ ggplot(data=state_data,aes(x=HS.Grad,y=Income))+geom_point()+geom_smooth()+facet
 # ggplot = data + aesthetics + geometry
 state_data$abb<-as.character(state.abb)
 
+install.packages('gridExtra')
 library(gridExtra)
 
 pl <- lapply(1:4, function(.x) qplot(1:10, rnorm(10), main=paste("plot", .x)))
-ml <- marrangeGrob(pl, nrow=2, ncol=2)
+ml <- arrangeGrob(pl, nrow=2, ncol=2)
 ml
 
 

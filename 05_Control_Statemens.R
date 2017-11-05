@@ -1,4 +1,4 @@
-# functions
+# FUNCTIONS ####
 
 # functions are all over in R. In fact, c(), as.matrix(), rbind(), seq(), rep()...
 # are all (pre-defined) functions. 
@@ -33,7 +33,7 @@ sqr_number(6748439851385693)
 # in R. This basicaly implement a set of rules and iterative routine that the computer runs
 # for us
 
-# CONDITIONAL STATEMENTS
+# CONDITIONAL STATEMENTS ####
 
 # if a happens then do this else do that
 
@@ -88,7 +88,7 @@ ifelse(test=x%%2==0, yes=paste0(x,' is even'), no=paste0(x, ' is odd'))
 
 # LOOPS
 
-# FOR LOOPS
+# FOR LOOPS ####
 
 # applies a statement an arbitrary number of times, until a specified counter ends
 
@@ -125,7 +125,9 @@ for (i in 1:ncol(state.x77)){
 winner
 
 # many times we can achive this task by using much more simple vectorised functions
-rownames(state.x77)[apply(state.x77,2,which.max)]
+winner<-character(ncol(state.x77))
+names(winner)<-colnames(state.x77)
+winner[]<-rownames(state.x77)[apply(state.x77,2,which.max)]
 
 # double for loops are very common; they are needed when you have two posible iterators
 
@@ -146,9 +148,9 @@ View(distances)
 
 # lets define the euclidean distance function
 
-distance<-function(C1,C2){
+distance<-function(a,b){
   
-  d <- sqrt((C2[1]-C1[1])^2 + (C2[2]-C1[2])^2)
+  d <- sqrt((b[1]-a[1])^2 + (b[2]-a[2])^2)
   
   return(d)
 }
@@ -158,8 +160,8 @@ distance<-function(C1,C2){
 
 for (i in 1:nrow(distances)){
   for(j in 1:ncol(distances)){
-    distances[i,j]<-distance(C1=c(data_center[i,'x'],data_center[i,'y']),
-                                  C2=c(data_center[j,'x'],data_center[j,'y']))
+    distances[i,j]<-distance(a=c(data_center[i,'x'],data_center[i,'y']),
+                                  b=c(data_center[j,'x'],data_center[j,'y']))
   }
 }
 View(distances)
@@ -169,7 +171,7 @@ View(distances)
 sort(distances['NY',],decreasing=F)
 
 
-# WHILE LOOPS
+# WHILE LOOPS ####
 
 # in while loops, you iterate a statement until some logical condition is met
 
@@ -210,24 +212,56 @@ fib<-function(integer){
 fib(15)
 plot(fib(15)) 
 
-recurse_fibonacci <- function(n) {
-  if(n <= 1) {
-    return(n)
-  } else {
-    return(recurse_fibonacci(n-1) + recurse_fibonacci(n-2))
-  }
-}
-
-recurse_fibonacci(13)
 
 
-# LAPPLY FAMILY OF FUNCTIONS
+# LAPPLY FAMILY OF FUNCTIONS ####
+class(distances)
 
+
+# apply: operates a function over a data.frame margins: 1 for row and 2 for columns 
 apply(distances,2,mean)
 apply(distances,1,mean)
 
+# lapply: operates a function over a list. Returns a list
+
+a<-list(a=letters[10],
+        b=runif(50),
+        c=data.frame(x=1:3,y=5:7))
+
+lapply(a,class)
+lapply(a,summary)
+
+lapply(a,mean)  # will return na whenever the operation  is not allowed over the element class
+
+# we can define our own function and apply it vectorized with lapply
+
+x<-list(a=15,b=34,c=7,d=2)
+
+result_even<-lapply(x,even_number)
+str(result_even)
+result_even$a
+
+result_prime<-lapply(x,is.prime)
+
+result_fib<-lapply(x,fib)
+
+lapply(lapply(x,fib),plot) # and we can chain vectorised operations
 
 
+# we can even define the function to apply on the fly, if we are not going to reuse the function
 
+lapply(x,function(x){return(mean(x*3-1))})
+
+
+# sapply does the same as lapply, but returns output in a simplified object (vector or matrix)
+
+result_prime<-sapply(x,is.prime)
+str(result_prime)
+
+
+str(result_fib<-sapply(x,fib))
+
+x<-list(a=15,b=15,c=15,d=15)
+str(result_fib<-sapply(x,fib))
 
 
