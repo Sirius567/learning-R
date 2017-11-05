@@ -1,0 +1,65 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+```{r, echo=FALSE, out.width = "50px"}
+knitr::include_graphics("C:/Users/sirio/Documents/learning-R/ie.png")
+setwd("C:/Users/sirio/Documents/learning-R")
+```
+
+---
+title: "04_subsetting - Statistical Programming in R"
+author: "Sirio Sobrino"
+date: "november 2017"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+## Subsetting in data.frames    
+Write the code bellow to generate the datasets.
+Then go throught the questions in a specific R script to save the results. You'll find the solutions in the campus as well.
+
+
+
+```{r nutshell, echo=TRUE}
+# install.packages('nutshell') no need if its already instaled
+# library(nutshell) # package calling always needed
+# data(batting.2008)
+# str(batting.2008)
+# head(batting.2008)
+
+```
+
+> 1. Check if there's NAs in the dataframe 
+
+> 2. Filter the dataframe, keeping only players born after 1980
+
+> 3. Filter the dataframe, keeping only players born after 1980 and who bats with boths arms (B in bats)
+
+> 4. Filter the dataframe, keeping only players born after 1980 and who bats with boths arms (B in bats) but throws with only left arm (L in trows)
+
+> 5. Filter the dataframe, keeping only players belonging to teams OAK or DET
+
+> 6. Filter the dataframe, keeping only players born after 1985, but only keeping variables nameLast, nameFirst, birthYear and teamID
+
+> 7. Filter the dataframe, keeping only players born after 1985 or with a height not greater than 71, but only keeping variables nameLast, nameFirst, birthYear, height and teamID
+
+> 8. Filter the dataframe, keeping only players born after 1985 or with a height not greater than 71, but keeping all variables except teamID
+
+> 9. Filter the dataframe, keeping only players born after 1985 or with a height not greater than 71, but keeping all variables except teamID and nameLast
+
+> 10. Filter the dataframe, keeping only players born after 1985 or before 1965 and with a height not greater than 71 or at least 90, keeping only variables nameLast, nameFirst, birthYear and height. Assign it to a new dataframe (batting_2)
+
+> 11. Create a new variable at the begining of the batting_2 being a sequence from one to the number of rows in batting_2, and name it id_row. Then eliminate it
+
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>...we'll learn it in class!! =)
+

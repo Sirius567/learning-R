@@ -1,0 +1,69 @@
+---
+output:
+  html_document: default
+  word_document: default
+---
+```{r, echo=FALSE, out.width = "50px"}
+knitr::include_graphics("C:/Users/sirio/Documents/learning-R/ie.png")
+setwd("C:/Users/sirio/Documents/learning-R")
+
+```
+
+---
+title: "04_merging - Statistical Programming in R"
+author: "Sirio Sobrino"
+date: "november 2017"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+## Merging data.frames    
+Write the code bellow to generate the datasets.
+Then go throught the questions in a specific R script to save the results. You'll find the solutions in the campus as well.
+
+
+
+```{r nutshell, echo=TRUE}
+# install.packages('nutshell') no need if its already instaled
+# library(nutshell) # package calling always needed 
+
+# load the medicare.payments.by.state data set from nutshell library
+data(medicare.payments.by.state)
+
+# read df_state.csv (in the campus, from previous session)
+df_state<-read.csv('df_states.csv',sep=';')
+```
+
+> 1. Name medicare.payments.by.state as df_medicare; check both dataframes structure 
+
+> 2. Filter df_medicare de-duplicating the States and assign it to df_medicare_unique.
+    + Check the levels of the State factor variable and compare with those of id variable in df_state
+
+> 3. Drop the variables Diagnosis.Related.Group and Footnote and the rows for States NY and CA from df_medicare_unique, and assign it to 
+df_medicare_unique_truncated
+
+> 4. Create an inner join between df_medicare_unique_truncated and df_state, keeping only states that match, assign it to df_inner_join and analyze the result
+
+> 5. Create a left join, keeping all states from df_medicare_unique_truncated (but not necessarily from df_states), and assign it to df_left_join_1>
+
+> 6. Create a left join, keeping all states from df_state (but not necessarily from df_medicare_unique_truncated), and assign it to df_left_join_2
+
+> 7. Create an outer join, keeping all states from df_state and from df_medicare_unique_truncated, and assign it to df_outer_join
+
+> 8. Create variable z in df_state filled with random letters A,B,C,U,V,W and variable z in df_medicare_unique with random letters A,B,C,D,E,F.
+    + Crate a data set from a merge between df_state and df_medicare_unique where you keep only states that match in both data frames by state abbreviation and with the same value for the z variable
+
+
+
+
+
+
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>...we'll learn it in class!! =)
+
