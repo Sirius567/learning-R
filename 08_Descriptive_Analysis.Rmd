@@ -13,13 +13,11 @@ knitr::opts_chunk$set(echo = T)
 #### Quantiles and Outlier Detection
 #### Variance, Covariance and Linear Correlation
 
-Lets's start donwloading the House Prices dataset from <http://rmarkdown.rstudio.com>. Then read it.
+Lets's start reading the House Prices dataset ('AmesHousing_pro.RData')
 
 ```{r raw_data_reading, echo=T}
-# .libPaths("/home/daadmin/R/x86_64-redhat-linux-gnu-library/3.2")
 library(data.table)
 library(knitr)
-# library(stargazer)
 raw_data<-readRDS('AmesHousing_pro.RData')
 ```
 
@@ -106,22 +104,27 @@ with(df,cor(x,y))
 attach(df)
 cor(x,y)==cov(x,y)/(sd(x)*sd(y))
 
-lm(y~x)$coef['x']
+beta<-lm(y~x)$coef['x']
+
+beta==cov(x,y)/var(x)
+
+print(beta-cov(x,y)/var(x))  # =)
+
 detach(df)
 
 ```
 
 
-```{r interactive_plot,echo=T, message=F}
+```{r interactive_plot,echo=T, warning= F, message= F}
 # We can also display interactive charts based on ggplot, via the ggplotly package
-# library(plotly)
+library(plotly)
 
-# ggplotly(
-  # ggplot(df,aes(x=x,y=y))+geom_point()
-  # ,width = 600, height = 400)
-# ggplotly(
-  # ggplot(df,aes(x=x,y=y))+geom_point()+stat_smooth(method='auto')
-  # ,width = 600, height = 400)
+ggplotly(
+ggplot(df,aes(x=x,y=y))+geom_point()
+,width = 600, height = 400)
+ggplotly(
+ggplot(df,aes(x=x,y=y))+geom_point()+stat_smooth(method='auto')
+,width = 600, height = 400)
 
 ```
 
@@ -129,7 +132,7 @@ detach(df)
 
 Correlation Matrix: a matrix indicating all pairwise linear correlation of a set of variables
 
-```{r correlation_matrix, echo=T}
+```{r correlation_matrix, echo=T, warning= F, message= F}
 library(corrplot)
 
 data_sample<-raw_data[,.(SalePrice,
@@ -144,8 +147,21 @@ corrplot(cor(data_sample[complete.cases(data_sample)]), method = 'number', tl.co
 
 library(GGally)
 
-p<-GGally::ggpairs(data_sample[complete.cases(data_sample)],axisLabels = 'none',size=1,lwd=0.5)
+p<-GGally::ggpairs(data_sample[complete.cases(data_sample)],axisLabels = 'none',size=1,lwd=0.5,alpha=.5)
 p
-# ggplotly(p, width = 800, height = 500)
+ggplotly(p, width = 800, height = 500)
 
 ```
+
+```{r grouped_operations}
+
+data_new<-raw_data[, .(mean_price=mean(SalePrice)), by=c('TotRms_AbvGrd','Heating')]
+data_new
+ggplot(raw_data,aes(x=TotRms_AbvGrd,y=SalePrice,colour=Heating))+geom_point(alpha=0.5)+geom_smooth(col='black')+theme_minimal()
+ggplot(raw_data,aes(x=TotRms_AbvGrd,y=SalePrice,colour=Heating))+geom_point(alpha=0.5)+geom_smooth(col='black', method = 'lm')+theme_minimal()
+
+ggplot(data_new,aes(x=TotRms_AbvGrd,y=mean_price,colour=Heating))+geom_point()
+
+ggplot(raw_data,aes(x=TotRms_AbvGrd,y=SalePrice,colour=Heating))+geom_point(alpha=0.5)+geom_smooth(col='black', method = 'lm')+theme_minimal()+geom_line(data=data_new,aes(y=mean_price),size=1.5)
+```
+
